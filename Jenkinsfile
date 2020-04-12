@@ -9,5 +9,10 @@ pipeline {
                 sh 'npm run clean'
             }
         }
+        stage('test') {
+            steps {
+                sh 'npm run clean'
+            }
+        }
     }
 }
