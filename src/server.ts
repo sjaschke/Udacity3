@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
+import {isURL} from "./util/util";
 
 (async () => {
 
@@ -17,7 +18,7 @@ import express from "express";
     // endpoint to filter an image from a public url.
     // IT SHOULD
     //    1
-    //    1. validate the image_url query
+    //    1. validate the image_url query - done
     //    2. call filterImageFromURL(image_url) to filter the image
     //    3. send the resulting file in the response
     //    4. deletes any files on the server on finish of the response
@@ -38,10 +39,10 @@ import express from "express";
 
     app.get("/filteredimage", async (req, res) => {
         const imageUri = req.query.image_url;
-        if (!imageUri) {
-
+        if (!imageUri || isURL(imageUri)) {
+            res.status(400).send("malformed url, only is https supported");
         }
-        res.send("try GET /filteredimage?image_url={{}}");
+        res.status(501).send("mot implemented yet");
     });
 
     // Start the Server
