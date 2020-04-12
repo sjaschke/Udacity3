@@ -15,4 +15,18 @@ pipeline {
             }
         }
     }
+    post {
+            always {
+                junit 'reports/*.xml'
+                 script {
+                    try {
+                        def projectKey = env.JOB_NAME + "_" + env.BRANCH_NAME
+                        projectKey = URLDecoder.decode(projectKey,"UTF-8").replaceAll('/', ':').replaceAll('#', '').replaceAll('%2F', ':')
+                        withSonarQubeEnv('sonar') {
+                            sh "/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=${projectKey}"
+                        }
+                    } catch (ignore) {}
+                }
+            }
+        }
 }
