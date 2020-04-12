@@ -39,10 +39,10 @@ import {isURL} from "./util/util";
 
     app.get("/filteredimage", async (req, res) => {
         const imageUri = req.query.image_url;
-        if (!imageUri || isURL(imageUri)) {
-            res.status(400).send("malformed url, only is https supported");
+        if (!imageUri || !isURL(imageUri)) {
+            return res.status(400).send("malformed url, only is https supported");
         }
-        res.status(501).send("mot implemented yet");
+        return res.status(501).send("not implemented yet");
     });
 
     // Start the Server
