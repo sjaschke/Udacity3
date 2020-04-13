@@ -56,3 +56,11 @@ export function isURL(str: string): boolean {
         "(\\#[-a-z\\d_]*)?$", "i"); // fragment locator
     return pattern.test(str);
 }
+
+function add({x, y}: { x: number, y: number }): number {
+    return x + y;
+}
+
+function sub({x, y}: { x: number, y: number }): number {
+    return x - y;
+}
