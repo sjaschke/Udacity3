@@ -1,17 +1,18 @@
 import fs from "fs";
 import Jimp = require("jimp");
+import { v4 as uuidv4 } from "uuid";
 
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
 // returns the absolute path to the local image
 // INPUTS
-//    inputURL: string - a publicly accessible url to an image file
+//    inputURL: string - a publicly accessible url to  an image file
 // RETURNS
 //    an absolute path to a filtered image locally saved file
 export async function filterImageFromURL(inputURL: string): Promise<string> {
     return new Promise(async (resolve) => {
         const photo = await Jimp.read(inputURL);
-        const outpath = "/tmp/filtered." + Math.floor(Math.random() * 2000) + ".jpg";
+        const outpath = "/tmp/filtered." + uuidv4() + ".jpg";
         photo
             .resize(256, 256) // resize
             .quality(60) // set JPEG quality
@@ -35,7 +36,7 @@ export async function deleteLocalFiles(files: string[]) {
 
 export function isURL(str: string) {
     str = decodeURI(str);
-    const pattern = new RegExp("^(https:\\/\\/)?" + // protocol
+    const pattern = new RegExp("^(https:\\/\\/)?" + // protocol (https only)
         "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
         "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
         "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
