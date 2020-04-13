@@ -12,8 +12,13 @@ const TMP_PATH = __dirname + "/tmp";
 // RETURNS
 //    an absolute path to a filtered image locally saved file
 export async function filterImageFromURL(inputURL: string): Promise<string> {
-    return new Promise(async (resolve) => {
-        const photo = await Jimp.read(inputURL);
+    return new Promise(async (resolve, reject) => {
+        let photo;
+        try {
+            photo = await Jimp.read(inputURL);
+        } catch (e) {
+            reject(e);
+        }
         const outpath = TMP_PATH + "/filtered." + uuidv4() + ".jpg";
         photo
             .resize(256, 256) // resize

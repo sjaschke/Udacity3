@@ -34,7 +34,7 @@ import {deleteTmpFolder, filterImageFromURL, isURL} from "./util/util";
     // Root Endpoint
     // Displays a simple message to the user
     app.get("/", async (req, res) => {
-        res.send("try GET /filteredimage?image_url={{}}");
+        return res.send("try GET /filteredimage?image_url={{}}");
     });
 
     app.get("/filteredimage", async (req, res) => {
@@ -42,7 +42,12 @@ import {deleteTmpFolder, filterImageFromURL, isURL} from "./util/util";
         if (!imageUri || !isURL(imageUri)) {
             return res.status(400).send("malformed url, only is https supported");
         }
-        const imagePath = await filterImageFromURL(imageUri);
+        let imagePath;
+        try {
+            imagePath = await filterImageFromURL(imageUri);
+        } catch (e) {
+            return res.status(400).send("remote resource is broken");
+        }
         const options = {
             headers: {
                 "Content-Type": "image/jpg; charset=utf-8",
