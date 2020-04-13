@@ -25,34 +25,6 @@ export async function filterImageFromURL(inputURL: string): Promise<string> {
     });
 }
 
-export async function filterImageFromURL3(inputURL: string): Promise<string> {
-    return new Promise(async (resolve) => {
-        const photo = await Jimp.read(inputURL);
-        const outpath = TMP_PATH + "/filtered." + uuidv4() + ".jpg";
-        photo
-            .resize(256, 256) // resize
-            .quality(60) // set JPEG quality
-            .greyscale() // set greyscale
-            .write(outpath, (img) => {
-                resolve(outpath);
-            });
-    });
-}
-export async function filterImageFromURL2(inputURL: string): Promise<string> {
-    return new Promise(async (resolve) => {
-        const photo = await Jimp.read(inputURL);
-        const outpath = TMP_PATH + "/filtered." + uuidv4() + ".jpg";
-        photo
-            .resize(256, 256) // resize
-            .quality(60) // set JPEG quality
-            .greyscale() // set greyscale
-            .write(outpath, (img) => {
-                resolve(outpath);
-            });
-    });
-}
-
-
 // deleteLocalFiles
 // helper function to delete files on the local disk
 // useful to cleanup after tasks
