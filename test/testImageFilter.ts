@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import "mocha";
 
-import {filterImageFromURL} from "../src/util/util";
+import {deleteTmpFolder, filterImageFromURL} from "../src/util/util";
 
 describe("test util url check", () => {
     it("test", async () => {
@@ -9,5 +9,7 @@ describe("test util url check", () => {
         const image = await filterImageFromURL(url);
         expect(image).to.be.a("string");
         expect(image.substr(-4)).to.equal(".jpg");
+        expect(deleteTmpFolder()).to.greaterThan(0);
+        expect(deleteTmpFolder()).to.equal(0);
     });
 });
