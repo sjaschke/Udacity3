@@ -1,7 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
-import {filterImageFromURL, isURL} from "./util/util";
-import * as fs from "fs";
+import {deleteTmpFolder, filterImageFromURL, isURL} from "./util/util";
 
 (async () => {
 
@@ -21,8 +20,8 @@ import * as fs from "fs";
     //    1
     //    1. validate the image_url query - done
     //    2. call filterImageFromURL(image_url) to filter the image - done
-    //    3. send the resulting file in the response
-    //    4. deletes any files on the server on finish of the response
+    //    3. send the resulting file in the response - done
+    //    4. deletes any files on the server on finish of the response - done
     // QUERY PARAMATERS
     //    image_url: URL of a publicly accessible image
     // RETURNS
@@ -44,11 +43,18 @@ import * as fs from "fs";
             return res.status(400).send("malformed url, only is https supported");
         }
         const imagePath = await filterImageFromURL(imageUri);
-
-        res.setHeader("Content-Type", "image/jpg; charset=utf-8");
-        res.setHeader("Transfer-Encoding", "chunked");
-        fs.readFile(imagePath, (err, data) => {
-            res.write(data);
+        const options = {
+            headers: {
+                "Content-Type": "image/jpg; charset=utf-8",
+            },
+        };
+        res.sendFile(imagePath, options, (err) => {
+            if (err) {
+                res.status(500).send("unexpected error, please try later").end();
+                // tslint:disable-next-line:no-console
+                console.error(err);
+            }
+            deleteTmpFolder();
         });
     });
 

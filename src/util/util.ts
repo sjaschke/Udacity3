@@ -1,6 +1,8 @@
 import fs from "fs";
+import {v4 as uuidv4} from "uuid";
 import Jimp = require("jimp");
-import { v4 as uuidv4 } from "uuid";
+
+const TMP_PATH = __dirname + "/tmp";
 
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
@@ -12,13 +14,13 @@ import { v4 as uuidv4 } from "uuid";
 export async function filterImageFromURL(inputURL: string): Promise<string> {
     return new Promise(async (resolve) => {
         const photo = await Jimp.read(inputURL);
-        const outpath = "/tmp/filtered." + uuidv4() + ".jpg";
+        const outpath = TMP_PATH + "/filtered." + uuidv4() + ".jpg";
         photo
             .resize(256, 256) // resize
             .quality(60) // set JPEG quality
             .greyscale() // set greyscale
-            .write(__dirname + outpath, (img) => {
-                resolve(__dirname + outpath);
+            .write(outpath, (img) => {
+                resolve(outpath);
             });
     });
 }
@@ -30,11 +32,21 @@ export async function filterImageFromURL(inputURL: string): Promise<string> {
 //    files: Array<string> an array of absolute paths to files
 export async function deleteLocalFiles(files: string[]) {
     for (const file of files) {
-        fs.unlinkSync(file);
+        fs.unlinkSync(TMP_PATH + "/" + file);
     }
 }
 
-export function isURL(str: string) {
+export function deleteTmpFolder(): number {
+    let fileCount: number;
+    if (fs.existsSync(TMP_PATH)) {
+        const files = fs.readdirSync(TMP_PATH);
+        fileCount = files.length;
+        deleteLocalFiles(files);
+    }
+    return fileCount;
+}
+
+export function isURL(str: string): boolean {
     str = decodeURI(str);
     const pattern = new RegExp("^(https:\\/\\/)?" + // protocol (https only)
         "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
