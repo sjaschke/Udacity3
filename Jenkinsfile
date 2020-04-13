@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        stage("sleep"){
+        stage("wait for analyzing"){
             steps{
                 sleep 30
             }
