@@ -1,7 +1,6 @@
 branch-defaults:
-  feature/UD3-8:
-    environment: image-filter-dev
-    group_suffix: null
+  develop:
+    environment: image-filter-dev-dev
 deploy:
   artifact: ./www/Archive.zip
 global:
