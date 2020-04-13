@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
-import {isURL} from "./util/util";
+import {filterImageFromURL, isURL} from "./util/util";
 
 (async () => {
 
@@ -42,7 +42,9 @@ import {isURL} from "./util/util";
         if (!imageUri || !isURL(imageUri)) {
             return res.status(400).send("malformed url, only is https supported");
         }
-        return res.status(501).send("not implemented yet");
+        const imagePromise = await filterImageFromURL(imageUri);
+
+        return res.status(201).send(imagePromise);
     });
 
     // Start the Server
