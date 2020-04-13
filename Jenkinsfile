@@ -21,20 +21,22 @@ pipeline {
             }
         }
         stage("SonarQube analysis") {
-            script {
-                try {
-                    def projectKey = env.JOB_NAME + "_" + env.BRANCH_NAME
-                    projectKey = URLDecoder.decode(projectKey, "UTF-8").replaceAll('/', ':').replaceAll('#', '').replaceAll('%2F', ':')
-                    withSonarQubeEnv('sonar') {
-                        sh "/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=${projectKey}"
+            steps {
+                script {
+                    try {
+                        def projectKey = env.JOB_NAME + "_" + env.BRANCH_NAME
+                        projectKey = URLDecoder.decode(projectKey, "UTF-8").replaceAll('/', ':').replaceAll('#', '').replaceAll('%2F', ':')
+                        withSonarQubeEnv('sonar') {
+                            sh "/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=${projectKey}"
+                        }
+                    } catch (ignore) {
                     }
-                } catch (ignore) {
                 }
             }
         }
         stage("Quality Gate") {
             steps {
-                timeout(time: 10, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
