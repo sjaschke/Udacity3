@@ -1,3 +1,4 @@
+#!groovy
 pipeline {
     agent any
     environment {
@@ -19,19 +20,31 @@ pipeline {
                 sh 'npm run test'
             }
         }
-    }
-    post {
-            always {
-                junit 'reports/*.xml'
-                 script {
+        stage("SonarQube analysis") {
+            steps {
+                script {
                     try {
                         def projectKey = env.JOB_NAME + "_" + env.BRANCH_NAME
-                        projectKey = URLDecoder.decode(projectKey,"UTF-8").replaceAll('/', ':').replaceAll('#', '').replaceAll('%2F', ':')
+                        projectKey = URLDecoder.decode(projectKey, "UTF-8").replaceAll('/', ':').replaceAll('#', '').replaceAll('%2F', ':')
                         withSonarQubeEnv('sonar') {
                             sh "/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=${projectKey}"
                         }
-                    } catch (ignore) {}
+                    } catch (ignore) {
+                    }
                 }
             }
         }
+//        stage("Quality Gate") {
+//            steps {
+//                timeout(time: 5, unit: 'MINUTES') {
+//                    waitForQualityGate abortPipeline: true
+//                }
+//            }
+//        }
+    }
+    post {
+        always {
+            junit 'reports/*.xml'
+        }
+    }
 }
